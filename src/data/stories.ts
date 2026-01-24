@@ -62,6 +62,48 @@ Tend your garden well, little one. It will give you beauty beyond imagination.`,
         'Tend your garden well, little one. It will give you beauty beyond imagination.',
       ],
     },
+    {
+      id: 'year0_story4',
+      year: 0,
+      title: 'Con Rồng Cháu Tiên',
+      content: `# Con Rồng Cháu Tiên
+
+Ngày xưa, ở miền đất Lạc Việt, cứ như bây giờ là Bắc Bộ nước ta, có một vị thần thuộc nòi rồng, con trai thần Long nữ, tên là Lạc Long Quân. Thần mình rồng, thường ở dưới nước, thỉnh thoảng lên sống trên cạn, sức khỏe vô địch, có nhiều phép lạ.
+
+Thần giúp nhân dân diệt trừ Ngư tinh, Hồ tinh, Mộc tinh là những loài yêu quái bấy lâu làm hại dân lành. Thần dạy dân cách trồng trọt, chăn nuôi và cách ăn ở. Xong việc, thần thường về thủy cung với mẹ, khi có việc cần, thần mới hiện lên.
+
+Bấy giờ, ở vùng núi cao phương Bắc, có nàng Âu Cơ thuộc dòng họ Thần Nông, xinh đẹp tuyệt trần, nghe tiếng vùng đất Lạc có nhiều hoa thơm cỏ lạ, bèn tìm đến thăm. Âu Cơ và Lạc Long Quân gặp nhau, đem lòng yêu thương, rồi trở thành vợ chồng, cùng nhau chung sống trên cạn ở điện Long Tráng.
+
+Ít lâu sau, Âu Cơ có mang, đến kỳ sinh nở, chuyện thật lạ, nàng sinh ra một cái bọc trăm trứng nở ra một trăm con trai, con nào con ấy hồng hào, đẹp đẽ lạ thường. Đàn con không cần bú mớm mà tự lớn lên như thổi, mặt mũi khôi ngô, khỏe mạnh như thần.
+
+Thế rồi một hôm, Lạc Long Quân vốn quen ở nước, cảm thấy mình không thể sống mãi trên cạn được, đành từ biệt Âu Cơ và đàn con để trở về thủy cung với mẹ. Âu Cơ ở lại một mình nuôi đàn con, tháng ngày chờ mong, buồn tủi. Cuối cùng nàng gọi chồng lên và than thở.
+
+"Sao chàng bỏ thiếp mà đi, không cùng thiếp nuôi đàn con nhỏ?"
+
+Lạc Long Quân nói: "Ta vốn nòi rồng ở miền nước thẳm, nàng là dòng tiên ở chốn non cao. Kẻ ở cạn, người ở nước, tính tình tập quán khác nhau, khó mà ăn ở cùng nhau một nơi lâu dài được. Nay ta đưa năm mươi con xuống biển, nàng đưa năm mươi con lên núi, chia nhau cai quản các phương. Kẻ miền núi, người miền biển, khi có việc gì thì giúp đỡ lẫn nhau, đừng quên lời hẹn."
+
+Âu Cơ và trăm con nghe theo, rồi cùng nhau chia tay nhau lên đường.
+
+Người con trưởng được tôn lên làm vua, lấy hiệu là Hùng Vương, đóng đô ở đất Phong Châu, đặt tên nước là Văn Lang. Triều đình có tướng văn, tướng võ, con trai vua gọi là quan lang, con gái vua gọi là mị nương, khi cha chết thì được truyền ngôi cho con trưởng, mười mấy đời truyền nối ngôi vua đều lấy danh hiệu Hùng Vương, không hề thay đổi.
+
+Cũng bởi sự tích này mà về sau, người Việt Nam ta con cháu vua Hùng, thường nhắc đến nguồn gốc của mình là con Rồng, cháu Tiên.`,
+      paragraphs: [
+        'Ngày xưa, ở miền đất Lạc Việt, cứ như bây giờ là Bắc Bộ nước ta, có một vị thần thuộc nòi rồng, con trai thần Long nữ, tên là Lạc Long Quân.',
+        'Thần mình rồng, thường ở dưới nước, thỉnh thoảng lên sống trên cạn, sức khỏe vô địch, có nhiều phép lạ.',
+        'Thần giúp nhân dân diệt trừ Ngư tinh, Hồ tinh, Mộc tinh là những loài yêu quái bấy lâu làm hại dân lành. Thần dạy dân cách trồng trọt, chăn nuôi và cách ăn ở.',
+        'Bấy giờ, ở vùng núi cao phương Bắc, có nàng Âu Cơ thuộc dòng họ Thần Nông, xinh đẹp tuyệt trần, nghe tiếng vùng đất Lạc có nhiều hoa thơm cỏ lạ, bèn tìm đến thăm.',
+        'Âu Cơ và Lạc Long Quân gặp nhau, đem lòng yêu thương, rồi trở thành vợ chồng, cùng nhau chung sống trên cạn ở điện Long Tráng.',
+        'Ít lâu sau, Âu Cơ có mang, đến kỳ sinh nở, chuyện thật lạ, nàng sinh ra một cái bọc trăm trứng nở ra một trăm con trai, con nào con ấy hồng hào, đẹp đẽ lạ thường.',
+        'Đàn con không cần bú mớm mà tự lớn lên như thổi, mặt mũi khôi ngô, khỏe mạnh như thần.',
+        'Thế rồi một hôm, Lạc Long Quân vốn quen ở nước, cảm thấy mình không thể sống mãi trên cạn được, đành từ biệt Âu Cơ và đàn con để trở về thủy cung với mẹ.',
+        'Âu Cơ ở lại một mình nuôi đàn con, tháng ngày chờ mong, buồn tủi. Cuối cùng nàng gọi chồng lên và than thở: "Sao chàng bỏ thiếp mà đi, không cùng thiếp nuôi đàn con nhỏ?"',
+        'Lạc Long Quân nói: "Ta vốn nòi rồng ở miền nước thẳm, nàng là dòng tiên ở chốn non cao. Kẻ ở cạn, người ở nước, tính tình tập quán khác nhau, khó mà ăn ở cùng nhau một nơi lâu dài được."',
+        '"Nay ta đưa năm mươi con xuống biển, nàng đưa năm mươi con lên núi, chia nhau cai quản các phương. Kẻ miền núi, người miền biển, khi có việc gì thì giúp đỡ lẫn nhau, đừng quên lời hẹn."',
+        'Âu Cơ và trăm con nghe theo, rồi cùng nhau chia tay nhau lên đường.',
+        'Người con trưởng được tôn lên làm vua, lấy hiệu là Hùng Vương, đóng đô ở đất Phong Châu, đặt tên nước là Văn Lang.',
+        'Cũng bởi sự tích này mà về sau, người Việt Nam ta con cháu vua Hùng, thường nhắc đến nguồn gốc của mình là con Rồng, cháu Tiên.',
+      ],
+    },
   ],
   1: [
     {

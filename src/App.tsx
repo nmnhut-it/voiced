@@ -75,7 +75,7 @@ function App() {
       {currentView === 'home' && (
         <>
           <VideoBackground videoId={currentAtmosphere?.id} />
-          <ParticleLayer />
+          <ParticleLayer atmosphereId={currentAtmosphere?.id} />
           <AgeDisplay ageInfo={ageInfo} />
         </>
       )}

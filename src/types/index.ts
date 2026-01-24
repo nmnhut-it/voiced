@@ -28,6 +28,7 @@ export interface Atmosphere {
     secondary: string;
     accent: string;
   };
+  generatedImageUrl?: string;
 }
 
 export interface AudioRecording {

@@ -5,13 +5,14 @@ interface VideoBackgroundProps {
 }
 
 const FALLBACK_GRADIENT = 'linear-gradient(135deg, #1a1235 0%, #2d1f4e 40%, #3d2d6b 70%, #4a3875 100%)';
+const BASE_URL = import.meta.env.BASE_URL;
 
 export function VideoBackground({ videoId }: VideoBackgroundProps) {
   const [mediaType, setMediaType] = useState<'video' | 'image' | 'gradient'>('gradient');
   const [isLoading, setIsLoading] = useState(true);
 
-  const videoSrc = videoId ? `/videos/${videoId}.mp4` : null;
-  const imageSrc = videoId ? `/atmospheres/${videoId}.png` : null;
+  const videoSrc = videoId ? `${BASE_URL}videos/${videoId}.mp4` : null;
+  const imageSrc = videoId ? `${BASE_URL}atmospheres/${videoId}.png` : null;
 
   useEffect(() => {
     if (!videoId) {
@@ -24,7 +25,7 @@ export function VideoBackground({ videoId }: VideoBackgroundProps) {
 
     // Try video first
     const video = document.createElement('video');
-    video.src = `/videos/${videoId}.mp4`;
+    video.src = `${BASE_URL}videos/${videoId}.mp4`;
 
     video.oncanplay = () => {
       setMediaType('video');
@@ -34,7 +35,7 @@ export function VideoBackground({ videoId }: VideoBackgroundProps) {
     video.onerror = () => {
       // Video failed, try image
       const img = new Image();
-      img.src = `/atmospheres/${videoId}.png`;
+      img.src = `${BASE_URL}atmospheres/${videoId}.png`;
 
       img.onload = () => {
         setMediaType('image');

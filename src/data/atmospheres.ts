@@ -106,6 +106,13 @@ export const YEAR_THEMES: YearTheme[] = [
         cssBackground: 'radial-gradient(ellipse at top, #D6F5FF 0%, #89CFF0 40%, #6BB8E0 70%, #5AA4CC 100%)',
         colors: { primary: '#89CFF0', secondary: '#FFFFFF', accent: '#FFFACD' },
       },
+      {
+        id: 'twilight_01',
+        name: 'Moonlit Ascent',
+        description: 'Birds flying toward sunset with starlight trail on ancient steps',
+        cssBackground: 'linear-gradient(135deg, #1a1a4e 0%, #2d2d6b 30%, #9b7bb8 50%, #f4a460 80%, #ffd700 100%)',
+        colors: { primary: '#9b7bb8', secondary: '#f4a460', accent: '#ffd700' },
+      },
     ],
   },
   {

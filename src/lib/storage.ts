@@ -6,9 +6,10 @@ const STORAGE_KEYS = {
 };
 
 const DB_NAME = 'GrowGlowDB';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const AUDIO_STORE = 'audioRecordings';
 const STORY_STORE = 'storyRecordings';
+const IMAGE_STORE = 'atmosphereImages';
 
 class StorageManager {
   private db: IDBDatabase | null = null;
@@ -36,6 +37,11 @@ class StorageManager {
           const store = db.createObjectStore(STORY_STORE, { keyPath: 'id' });
           store.createIndex('storyId', 'storyId', { unique: false });
           store.createIndex('recordedAt', 'recordedAt', { unique: false });
+        }
+
+        if (!db.objectStoreNames.contains(IMAGE_STORE)) {
+          const store = db.createObjectStore(IMAGE_STORE, { keyPath: 'atmosphereId' });
+          store.createIndex('createdAt', 'createdAt', { unique: false });
         }
       };
     });
@@ -150,6 +156,53 @@ class StorageManager {
       const request = store.getAll();
 
       request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async saveAtmosphereImage(atmosphereId: string, imageBlob: Blob): Promise<void> {
+    if (!this.db) await this.init();
+
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([IMAGE_STORE], 'readwrite');
+      const store = transaction.objectStore(IMAGE_STORE);
+      const imageData = {
+        atmosphereId,
+        imageBlob,
+        createdAt: new Date().toISOString(),
+      };
+      const request = store.put(imageData);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async getAtmosphereImage(atmosphereId: string): Promise<Blob | null> {
+    if (!this.db) await this.init();
+
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([IMAGE_STORE], 'readonly');
+      const store = transaction.objectStore(IMAGE_STORE);
+      const request = store.get(atmosphereId);
+
+      request.onsuccess = () => {
+        const result = request.result;
+        resolve(result ? result.imageBlob : null);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async deleteAtmosphereImage(atmosphereId: string): Promise<void> {
+    if (!this.db) await this.init();
+
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction([IMAGE_STORE], 'readwrite');
+      const store = transaction.objectStore(IMAGE_STORE);
+      const request = store.delete(atmosphereId);
+
+      request.onsuccess = () => resolve();
       request.onerror = () => reject(request.error);
     });
   }

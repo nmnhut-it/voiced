@@ -14,6 +14,8 @@ export function AtmosphereViewer({
   onShuffle,
 }: AtmosphereViewerProps) {
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imagePath, setImagePath] = useState<string | null>(null);
 
   useEffect(() => {
     if (currentAtmosphere) {
@@ -23,7 +25,34 @@ export function AtmosphereViewer({
     }
   }, [currentAtmosphere]);
 
+  useEffect(() => {
+    if (currentAtmosphere) {
+      const path = `/atmospheres/${currentAtmosphere.id}.png`;
+      setImageLoaded(false);
+      setImagePath(path);
+
+      const img = new Image();
+      img.onload = () => setImageLoaded(true);
+      img.onerror = () => {
+        setImageLoaded(false);
+        setImagePath(null);
+      };
+      img.src = path;
+    }
+  }, [currentAtmosphere]);
+
   if (!currentAtmosphere) return null;
+
+  const backgroundStyle = imagePath && imageLoaded
+    ? {
+        backgroundImage: `url(${imagePath})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }
+    : {
+        background: currentAtmosphere.cssBackground,
+      };
 
   return (
     <div className="fixed inset-0 w-full h-full">
@@ -31,9 +60,7 @@ export function AtmosphereViewer({
         className={`absolute inset-0 transition-opacity duration-800 ${
           isTransitioning ? 'opacity-0' : 'opacity-100'
         }`}
-        style={{
-          background: currentAtmosphere.cssBackground,
-        }}
+        style={backgroundStyle}
       />
 
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 select-none">
