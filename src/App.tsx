@@ -25,12 +25,28 @@ function App() {
 
     initializeApp();
 
-    const interval = setInterval(() => {
+    // Update age every minute
+    const ageInterval = setInterval(() => {
       updateAgeAndAtmosphere();
     }, 60000);
 
-    return () => clearInterval(interval);
+    return () => clearInterval(ageInterval);
   }, []);
+
+  // Auto-rotate atmosphere every 60 seconds
+  useEffect(() => {
+    if (availableAtmospheres.length <= 1) return;
+
+    const rotateInterval = setInterval(() => {
+      setCurrentAtmosphere((prev) => {
+        const currentIndex = availableAtmospheres.findIndex((a) => a.id === prev?.id);
+        const nextIndex = (currentIndex + 1) % availableAtmospheres.length;
+        return availableAtmospheres[nextIndex];
+      });
+    }, 60000);
+
+    return () => clearInterval(rotateInterval);
+  }, [availableAtmospheres]);
 
   const updateAgeAndAtmosphere = () => {
     const info = calculateAge(profile.dayZero);

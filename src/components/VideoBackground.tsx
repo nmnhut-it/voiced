@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface VideoBackgroundProps {
   videoId?: string;
@@ -6,16 +6,48 @@ interface VideoBackgroundProps {
 
 const FALLBACK_GRADIENT = 'linear-gradient(135deg, #1a1235 0%, #2d1f4e 40%, #3d2d6b 70%, #4a3875 100%)';
 const BASE_URL = import.meta.env.BASE_URL;
+const TRANSITION_DURATION = 1500; // ms
 
 export function VideoBackground({ videoId }: VideoBackgroundProps) {
   const [mediaType, setMediaType] = useState<'video' | 'image' | 'gradient'>('gradient');
   const [isLoading, setIsLoading] = useState(true);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [displayedVideoId, setDisplayedVideoId] = useState(videoId);
+  const prevVideoIdRef = useRef(videoId);
 
-  const videoSrc = videoId ? `${BASE_URL}videos/${videoId}.mp4` : null;
-  const imageSrc = videoId ? `${BASE_URL}atmospheres/${videoId}.png` : null;
+  const videoSrc = displayedVideoId ? `${BASE_URL}videos/${displayedVideoId}.mp4` : null;
+  const imageSrc = displayedVideoId ? `${BASE_URL}atmospheres/${displayedVideoId}.png` : null;
 
+  // Handle transition when videoId changes
   useEffect(() => {
-    if (!videoId) {
+    if (prevVideoIdRef.current !== videoId && prevVideoIdRef.current !== undefined) {
+      // Start blur transition
+      setIsTransitioning(true);
+
+      // After half the transition, swap the content
+      const swapTimeout = setTimeout(() => {
+        setDisplayedVideoId(videoId);
+      }, TRANSITION_DURATION / 2);
+
+      // After full transition, remove blur
+      const endTimeout = setTimeout(() => {
+        setIsTransitioning(false);
+      }, TRANSITION_DURATION);
+
+      prevVideoIdRef.current = videoId;
+      return () => {
+        clearTimeout(swapTimeout);
+        clearTimeout(endTimeout);
+      };
+    } else {
+      setDisplayedVideoId(videoId);
+      prevVideoIdRef.current = videoId;
+    }
+  }, [videoId]);
+
+  // Load media for displayed video
+  useEffect(() => {
+    if (!displayedVideoId) {
       setMediaType('gradient');
       setIsLoading(false);
       return;
@@ -25,7 +57,7 @@ export function VideoBackground({ videoId }: VideoBackgroundProps) {
 
     // Try video first
     const video = document.createElement('video');
-    video.src = `${BASE_URL}videos/${videoId}.mp4`;
+    video.src = `${BASE_URL}videos/${displayedVideoId}.mp4`;
 
     video.oncanplay = () => {
       setMediaType('video');
@@ -35,7 +67,7 @@ export function VideoBackground({ videoId }: VideoBackgroundProps) {
     video.onerror = () => {
       // Video failed, try image
       const img = new Image();
-      img.src = `${BASE_URL}atmospheres/${videoId}.png`;
+      img.src = `${BASE_URL}atmospheres/${displayedVideoId}.png`;
 
       img.onload = () => {
         setMediaType('image');
@@ -47,10 +79,18 @@ export function VideoBackground({ videoId }: VideoBackgroundProps) {
         setIsLoading(false);
       };
     };
-  }, [videoId]);
+  }, [displayedVideoId]);
 
   return (
-    <div className="fixed inset-0 z-10">
+    <div
+      className="fixed inset-0 z-10 transition-all"
+      style={{
+        filter: isTransitioning ? 'blur(20px) brightness(1.1)' : 'blur(0px)',
+        transform: isTransitioning ? 'scale(1.1)' : 'scale(1)',
+        transitionDuration: `${TRANSITION_DURATION / 2}ms`,
+        transitionTimingFunction: 'ease-in-out',
+      }}
+    >
       {/* Base gradient layer - always visible as foundation */}
       <div
         className="absolute inset-0 w-full h-full"
