@@ -1,10 +1,13 @@
 import { AgeInfo } from '../types';
+import { WaveVisualizer } from './WaveVisualizer';
 
 interface AgeDisplayProps {
   ageInfo: AgeInfo;
+  audioAnalyser?: AnalyserNode | null;
+  isPlayingAudio?: boolean;
 }
 
-export function AgeDisplay({ ageInfo }: AgeDisplayProps) {
+export function AgeDisplay({ ageInfo, audioAnalyser, isPlayingAudio }: AgeDisplayProps) {
   const { years, months, days, stage } = ageInfo;
 
   return (
@@ -37,6 +40,9 @@ export function AgeDisplay({ ageInfo }: AgeDisplayProps) {
         >
           {stage.name}
         </div>
+
+        {/* Wave visualizer for audio playback */}
+        <WaveVisualizer analyser={audioAnalyser ?? null} isActive={isPlayingAudio ?? false} />
       </div>
     </div>
   );

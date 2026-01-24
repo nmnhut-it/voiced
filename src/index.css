@@ -42,6 +42,25 @@
   animation-delay: var(--delay, 0s);
 }
 
+/* Faster rising for audio-reactive particles */
+@keyframes rise-fast {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.9;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-120vh) scale(0.3);
+    opacity: 0;
+  }
+}
+
+.animate-rise-fast {
+  animation: rise-fast var(--duration, 3s) ease-out forwards;
+}
+
 /* Glow pulse for interactive elements */
 @keyframes glow-pulse {
   0%, 100% {
@@ -54,4 +73,32 @@
 
 .animate-glow-pulse {
   animation: glow-pulse 3s ease-in-out infinite;
+}
+
+/* Sparkle burst effect for touch/click interaction */
+@keyframes sparkle-burst {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(-50% + var(--end-x)), calc(-50% + var(--end-y))) scale(0);
+    opacity: 0;
+  }
+}
+
+/* Fade in text animation */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-text {
+  animation: fade-in-up 0.5s ease-out;
 }

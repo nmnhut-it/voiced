@@ -3,6 +3,7 @@ import { UserProfile, AudioRecording, StoryRecording } from '../types';
 const STORAGE_KEYS = {
   USER_PROFILE: 'growglow_user_profile',
   CURRENT_ATMOSPHERE: 'growglow_current_atmosphere',
+  FIRST_VISIT_COMPLETE: 'growglow_first_visit_complete',
 };
 
 const DB_NAME = 'GrowGlowDB';
@@ -66,6 +67,14 @@ class StorageManager {
 
   setCurrentAtmosphereId(id: string): void {
     localStorage.setItem(STORAGE_KEYS.CURRENT_ATMOSPHERE, id);
+  }
+
+  isFirstVisit(): boolean {
+    return localStorage.getItem(STORAGE_KEYS.FIRST_VISIT_COMPLETE) !== 'true';
+  }
+
+  markFirstVisitComplete(): void {
+    localStorage.setItem(STORAGE_KEYS.FIRST_VISIT_COMPLETE, 'true');
   }
 
   async saveAudioRecording(recording: Omit<AudioRecording, 'id'>): Promise<string> {

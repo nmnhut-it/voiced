@@ -18,6 +18,8 @@ export interface YearTheme {
   atmospheres: Atmosphere[];
 }
 
+export type TimeOfDay = 'day' | 'twilight' | 'night';
+
 export interface Atmosphere {
   id: string;
   name: string;
@@ -28,6 +30,7 @@ export interface Atmosphere {
     secondary: string;
     accent: string;
   };
+  timeOfDay?: TimeOfDay;
   generatedImageUrl?: string;
 }
 

@@ -2,13 +2,25 @@ import { useState, useEffect, useRef } from 'react';
 
 interface VideoBackgroundProps {
   videoId?: string;
+  allAtmosphereIds?: string[];
 }
 
 const FALLBACK_GRADIENT = 'linear-gradient(135deg, #1a1235 0%, #2d1f4e 40%, #3d2d6b 70%, #4a3875 100%)';
 const BASE_URL = import.meta.env.BASE_URL;
-const TRANSITION_DURATION = 1500; // ms
+const TRANSITION_DURATION = 600; // ms - faster transition
 
-export function VideoBackground({ videoId }: VideoBackgroundProps) {
+// Cache for preloaded images
+const preloadedImages = new Set<string>();
+
+// Preload an image and cache it
+function preloadImage(src: string): void {
+  if (preloadedImages.has(src)) return;
+  const img = new Image();
+  img.src = src;
+  img.onload = () => preloadedImages.add(src);
+}
+
+export function VideoBackground({ videoId, allAtmosphereIds = [] }: VideoBackgroundProps) {
   const [mediaType, setMediaType] = useState<'video' | 'image' | 'gradient'>('gradient');
   const [isLoading, setIsLoading] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -17,6 +29,13 @@ export function VideoBackground({ videoId }: VideoBackgroundProps) {
 
   const videoSrc = displayedVideoId ? `${BASE_URL}videos/${displayedVideoId}.mp4` : null;
   const imageSrc = displayedVideoId ? `${BASE_URL}atmospheres/${displayedVideoId}.png` : null;
+
+  // Preload all atmosphere images on mount
+  useEffect(() => {
+    allAtmosphereIds.forEach((id) => {
+      preloadImage(`${BASE_URL}atmospheres/${id}.png`);
+    });
+  }, [allAtmosphereIds]);
 
   // Handle transition when videoId changes
   useEffect(() => {
