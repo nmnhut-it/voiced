@@ -10,7 +10,7 @@ export function AgeDisplay({ ageInfo }: AgeDisplayProps) {
   return (
     <div className="fixed z-30 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center select-none">
       {/* Subtle backdrop */}
-      <div className="backdrop-blur-md bg-white/10 rounded-3xl px-8 py-6 sm:px-12 sm:py-8 border border-white/20">
+      <div className="bg-black/20 rounded-3xl px-8 py-6 sm:px-12 sm:py-8 border border-white/10">
         {/* Age display */}
         <div
           className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight"
