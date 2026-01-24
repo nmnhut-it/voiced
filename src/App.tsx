@@ -3,11 +3,12 @@ import { UserProfile, Atmosphere, AgeInfo } from './types';
 import { storage } from './lib/storage';
 import { calculateAge, getDayOfYear } from './lib/ageCalculator';
 import { getStoriesForYear } from './data/stories';
-import { LifeClock } from './components/LifeClock';
-import { AtmosphereViewer } from './components/AtmosphereViewer';
 import { Navigation } from './components/Navigation';
 import { StoryReader } from './components/StoryReader';
 import { Settings } from './components/Settings';
+import { VideoBackground } from './components/VideoBackground';
+import { ParticleLayer } from './components/ParticleLayer';
+import { AgeDisplay } from './components/AgeDisplay';
 
 function App() {
   const [profile] = useState<UserProfile>(storage.getUserProfile());
@@ -73,12 +74,9 @@ function App() {
     <div className="fixed inset-0 w-full h-full overflow-hidden">
       {currentView === 'home' && (
         <>
-          <AtmosphereViewer
-            atmospheres={availableAtmospheres}
-            currentAtmosphere={currentAtmosphere}
-            onShuffle={handleShuffle}
-          />
-          <LifeClock ageInfo={ageInfo} />
+          <VideoBackground videoId={currentAtmosphere?.id} />
+          <ParticleLayer />
+          <AgeDisplay ageInfo={ageInfo} />
         </>
       )}
 

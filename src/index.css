@@ -1,3 +1,57 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Will-o'-wisp floating animation */
+@keyframes float-wisp {
+  0%, 100% {
+    transform: translateY(0) translateX(0) scale(1);
+  }
+  25% {
+    transform: translateY(-25px) translateX(12px) scale(1.05);
+  }
+  50% {
+    transform: translateY(-10px) translateX(-8px) scale(0.95);
+  }
+  75% {
+    transform: translateY(-30px) translateX(15px) scale(1.02);
+  }
+}
+
+.animate-float-wisp {
+  animation: float-wisp 8s ease-in-out infinite;
+}
+
+/* Rising particle - starts big, dwindles as it rises */
+@keyframes rise-and-fade {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(-100vh) scale(0.2);
+    opacity: 0;
+  }
+}
+
+.animate-rise {
+  animation: rise-and-fade var(--duration, 8s) ease-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+/* Glow pulse for interactive elements */
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px 10px currentColor;
+  }
+  50% {
+    box-shadow: 0 0 35px 18px currentColor;
+  }
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
