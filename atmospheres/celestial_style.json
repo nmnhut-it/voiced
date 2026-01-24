@@ -1,0 +1,81 @@
+{
+  "style_name": "Magic Blue Sunrise Sanctuary",
+  "art_style": {
+    "medium": "2D digital painting",
+    "aesthetic": "hand-drawn, painterly, soft fantasy",
+    "inspiration": [
+      "Hollow Knight atmosphere",
+      "dreamlike sanctuary",
+      "hopeful sunrise fantasy"
+    ],
+    "detail_level": "medium",
+    "linework": "soft, delicate, not sharp"
+  },
+  "color_palette": {
+    "dominant_color": {
+      "name": "Magic Dawn Blue",
+      "description": "clean magical blue with a slight cyan lean, not gray, not navy",
+      "usage": "air, background, shadows, deep space"
+    },
+    "secondary_color": {
+      "name": "Blue-Green Teal Mist",
+      "description": "muted blue-green, leaning cool, no olive or brown",
+      "usage": "foliage, vines, mid-ground elements"
+    },
+    "light_color": {
+      "name": "Sunrise Hope Orange",
+      "description": "soft warm orange-peach used only as light, not solid objects",
+      "usage": "rim light, directional sunlight, highlights"
+    },
+    "orb_light": {
+      "name": "Warm Pearl Light",
+      "description": "warm white with subtle orange warmth, soft core, diffused glow",
+      "usage": "floating orbs, soul lights"
+    }
+  },
+  "lighting": {
+    "type": "sunrise lighting",
+    "direction": "diagonal, lower-left to upper-right",
+    "rules": [
+      "shadows remain blue",
+      "warm tones appear only as light influence",
+      "no white fog wash",
+      "no sepia or beige cast"
+    ]
+  },
+  "composition": {
+    "layout": "diagonal flow",
+    "movement_direction": "upward and diagonal",
+    "focus": "floating orbs and butterflies following the light path"
+  },
+  "effects": {
+    "particles": {
+      "type": "magic dust",
+      "appearance": "fine, subtle, short-lived",
+      "color": "near-white, slightly warm",
+      "behavior": "spark briefly then fade"
+    },
+    "butterflies": {
+      "appearance": "pale, almost colorless wings",
+      "glow": "soft, not intense",
+      "interaction": "cast gentle magic dust when moving"
+    }
+  },
+  "mood": [
+    "peaceful",
+    "hopeful",
+    "protected",
+    "magical at dawn"
+  ],
+  "constraints": {
+    "avoid": [
+      "vintage look",
+      "washed-out colors",
+      "sepia tone",
+      "neon colors",
+      "strong gold lighting",
+      "high saturation",
+      "photorealism"
+    ]
+  }
+}
