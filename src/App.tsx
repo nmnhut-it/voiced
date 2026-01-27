@@ -2,17 +2,12 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { UserProfile, Atmosphere, AgeInfo, TimeOfDay } from './types';
 import { storage } from './lib/storage';
 import { calculateAge } from './lib/ageCalculator';
-import { getStoriesForYear } from './data/stories';
-import { Navigation } from './components/Navigation';
-import { StoryReader } from './components/StoryReader';
-import { Settings } from './components/Settings';
 import { VideoBackground } from './components/VideoBackground';
 import { ParticleLayer } from './components/ParticleLayer';
 import { AgeDisplay } from './components/AgeDisplay';
 import { SparkleEffect } from './components/SparkleEffect';
 
 const BASE_URL = import.meta.env.BASE_URL;
-const WELCOME_AUDIO_PATH = `${BASE_URL}sound/nhung-canh-buom.m4a`;
 
 // Welcome atmosphere shown on first visit
 const WELCOME_ATMOSPHERE: Atmosphere = {
@@ -22,6 +17,7 @@ const WELCOME_ATMOSPHERE: Atmosphere = {
   cssBackground: 'linear-gradient(180deg, #87CEEB 0%, #f4a460 50%, #ffd700 100%)',
   colors: { primary: '#f4a460', secondary: '#ffd700', accent: '#87CEEB' },
   timeOfDay: 'twilight',
+  audioPath: 'sound/nhung-canh-buom.m4a',
 };
 
 // Get current time of day based on hour
@@ -47,7 +43,6 @@ function App() {
   const [currentAtmosphere, setCurrentAtmosphere] = useState<Atmosphere | null>(null);
   const [allAtmospheres, setAllAtmospheres] = useState<Atmosphere[]>([]);
   const [availableAtmospheres, setAvailableAtmospheres] = useState<Atmosphere[]>([]);
-  const [currentView, setCurrentView] = useState<'home' | 'archive' | 'settings'>('home');
   const [sparkleTrigger, setSparkleTrigger] = useState<{ x: number; y: number; id: number } | null>(null);
 
   // First visit and audio state
@@ -56,6 +51,7 @@ function App() {
   const [audioAnalyser, setAudioAnalyser] = useState<AnalyserNode | null>(null);
   const [audioEnded, setAudioEnded] = useState(false);
   const audioContextRef = useRef<AudioContext | null>(null);
+  const audioSourceRef = useRef<AudioBufferSourceNode | null>(null);
 
   // Touch tracking for swipe/tap detection
   const touchStartRef = useRef<{ x: number; y: number; time: number } | null>(null);
@@ -92,17 +88,35 @@ function App() {
 
   // Auto-rotate disabled - user changes atmosphere manually via tap/click
 
-  // Play welcome audio
-  const playWelcomeAudio = useCallback(async () => {
+  // Play atmosphere audio
+  const playAtmosphereAudio = useCallback(async (atmosphere: Atmosphere) => {
+    if (!atmosphere.audioPath) return;
+
+    // Stop any currently playing audio
+    if (audioSourceRef.current) {
+      audioSourceRef.current.stop();
+      audioSourceRef.current = null;
+    }
+
     try {
-      const audioContext = new AudioContext();
-      audioContextRef.current = audioContext;
+      // Reuse existing context or create new one
+      let audioContext = audioContextRef.current;
+      if (!audioContext || audioContext.state === 'closed') {
+        audioContext = new AudioContext();
+        audioContextRef.current = audioContext;
+      }
+
+      // Resume if suspended (browser autoplay policy)
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+      }
 
       const analyser = audioContext.createAnalyser();
       analyser.fftSize = 256;
       setAudioAnalyser(analyser);
 
-      const response = await fetch(WELCOME_AUDIO_PATH);
+      const audioUrl = `${BASE_URL}${atmosphere.audioPath}`;
+      const response = await fetch(audioUrl);
       const arrayBuffer = await response.arrayBuffer();
       const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
@@ -110,14 +124,17 @@ function App() {
       source.buffer = audioBuffer;
       source.connect(analyser);
       analyser.connect(audioContext.destination);
+      audioSourceRef.current = source;
 
       source.onended = () => {
         setAudioEnded(true);
         setIsPlayingAudio(false);
+        audioSourceRef.current = null;
       };
 
       source.start();
       setIsPlayingAudio(true);
+      setAudioEnded(false);
     } catch (error) {
       console.error('Failed to play audio:', error);
       setAudioEnded(true);
@@ -174,14 +191,14 @@ function App() {
 
   // Handle click on background
   const handleClick = useCallback((e: React.MouseEvent) => {
-    // Don't trigger if clicking on navigation or other interactive elements
-    if ((e.target as HTMLElement).closest('button, a, nav')) return;
+    // Don't trigger if clicking on interactive elements
+    if ((e.target as HTMLElement).closest('button, a')) return;
 
     // Handle first visit flow
     if (isFirstVisit) {
       if (!isPlayingAudio && !audioEnded) {
         // First tap: Start playing audio
-        playWelcomeAudio();
+        playAtmosphereAudio(WELCOME_ATMOSPHERE);
       } else if (audioEnded) {
         // Audio finished, tap to continue
         completeFirstVisit();
@@ -189,8 +206,15 @@ function App() {
       return;
     }
 
+    // If current atmosphere has audio and not playing, play it
+    if (currentAtmosphere?.audioPath && !isPlayingAudio) {
+      playAtmosphereAudio(currentAtmosphere);
+      return;
+    }
+
+    // Otherwise cycle to next atmosphere
     cycleAtmosphere(e.clientX, e.clientY);
-  }, [cycleAtmosphere, isFirstVisit, isPlayingAudio, audioEnded, playWelcomeAudio, completeFirstVisit]);
+  }, [cycleAtmosphere, isFirstVisit, isPlayingAudio, audioEnded, playAtmosphereAudio, completeFirstVisit, currentAtmosphere]);
 
   // Handle touch start for swipe/tap detection
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
@@ -201,8 +225,8 @@ function App() {
   // Handle touch end for swipe/tap detection
   const handleTouchEnd = useCallback((e: React.TouchEvent) => {
     if (!touchStartRef.current) return;
-    // Don't trigger if touching navigation or other interactive elements
-    if ((e.target as HTMLElement).closest('button, a, nav')) {
+    // Don't trigger if touching interactive elements
+    if ((e.target as HTMLElement).closest('button, a')) {
       touchStartRef.current = null;
       return;
     }
@@ -221,10 +245,17 @@ function App() {
       // Handle first visit flow
       if (isFirstVisit) {
         if (!isPlayingAudio && !audioEnded) {
-          playWelcomeAudio();
+          playAtmosphereAudio(WELCOME_ATMOSPHERE);
         } else if (audioEnded) {
           completeFirstVisit();
         }
+        touchStartRef.current = null;
+        return;
+      }
+
+      // If current atmosphere has audio and not playing, play it
+      if (currentAtmosphere?.audioPath && !isPlayingAudio) {
+        playAtmosphereAudio(currentAtmosphere);
         touchStartRef.current = null;
         return;
       }
@@ -233,7 +264,7 @@ function App() {
     }
 
     touchStartRef.current = null;
-  }, [cycleAtmosphere, isFirstVisit, isPlayingAudio, audioEnded, playWelcomeAudio, completeFirstVisit]);
+  }, [cycleAtmosphere, isFirstVisit, isPlayingAudio, audioEnded, playAtmosphereAudio, completeFirstVisit, currentAtmosphere]);
 
   if (!ageInfo) {
     return (
@@ -248,66 +279,67 @@ function App() {
   return (
     <div
       className="fixed inset-0 w-full h-full overflow-hidden"
-      onClick={currentView === 'home' ? handleClick : undefined}
-      onTouchStart={currentView === 'home' ? handleTouchStart : undefined}
-      onTouchEnd={currentView === 'home' ? handleTouchEnd : undefined}
+      onClick={handleClick}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
-      {currentView === 'home' && (
-        <>
-          <VideoBackground
-            videoId={currentAtmosphere?.id}
-            allAtmosphereIds={allAtmospheres.map((a) => a.id)}
-          />
-          <ParticleLayer
-            atmosphereId={currentAtmosphere?.id}
-            audioAnalyser={audioAnalyser}
-            isPlayingAudio={isPlayingAudio}
-          />
-          <AgeDisplay
-            ageInfo={ageInfo}
-            audioAnalyser={audioAnalyser}
-            isPlayingAudio={isPlayingAudio}
-          />
-          <SparkleEffect trigger={sparkleTrigger} />
+      <VideoBackground
+        videoId={currentAtmosphere?.id}
+        allAtmosphereIds={allAtmospheres.map((a) => a.id)}
+      />
+      <ParticleLayer
+        atmosphereId={currentAtmosphere?.id}
+        audioAnalyser={audioAnalyser}
+        isPlayingAudio={isPlayingAudio}
+      />
+      <AgeDisplay
+        ageInfo={ageInfo}
+        audioAnalyser={audioAnalyser}
+        isPlayingAudio={isPlayingAudio}
+      />
+      <SparkleEffect trigger={sparkleTrigger} />
 
-          {/* First visit prompt messages */}
-          {isFirstVisit && (
-            <div className="fixed bottom-32 left-0 right-0 z-40 text-center">
-              {!isPlayingAudio && !audioEnded && (
-                <div
-                  className="text-white/80 text-lg animate-pulse"
-                  style={{ textShadow: '0 0 10px rgba(0,0,0,0.5)' }}
-                >
-                  Tap to play
-                </div>
-              )}
-              {audioEnded && (
-                <div
-                  className="text-white/90 text-lg fade-in-text"
-                  style={{ textShadow: '0 0 10px rgba(0,0,0,0.5)' }}
-                >
-                  Tap to continue
-                </div>
-              )}
-            </div>
-          )}
-        </>
+      {/* Prompt messages */}
+      <div className="fixed bottom-32 left-0 right-0 z-40 text-center">
+        {isFirstVisit && !isPlayingAudio && !audioEnded && (
+          <div
+            className="text-white/80 text-lg animate-pulse"
+            style={{ textShadow: '0 0 10px rgba(0,0,0,0.5)' }}
+          >
+            Tap to play
+          </div>
+        )}
+        {isFirstVisit && audioEnded && (
+          <div
+            className="text-white/90 text-lg fade-in-text"
+            style={{ textShadow: '0 0 10px rgba(0,0,0,0.5)' }}
+          >
+            Tap to continue
+          </div>
+        )}
+        {!isFirstVisit && currentAtmosphere?.audioPath && !isPlayingAudio && (
+          <div
+            className="text-white/60 text-sm"
+            style={{ textShadow: '0 0 10px rgba(0,0,0,0.5)' }}
+          >
+            Tap to play
+          </div>
+        )}
+      </div>
+
+      {/* Atmosphere switcher button */}
+      {!isFirstVisit && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            cycleAtmosphere(window.innerWidth / 2, window.innerHeight / 2);
+          }}
+          className="fixed bottom-8 right-8 z-50 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white/80 text-sm hover:bg-white/20 transition-all"
+          style={{ textShadow: '0 0 10px rgba(0,0,0,0.5)' }}
+        >
+          {currentAtmosphere?.name || 'Realms'}
+        </button>
       )}
-
-      {currentView === 'archive' && (
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-pink-800 to-yellow-700">
-          <StoryReader stories={getStoriesForYear(ageInfo.exactYear)} currentYear={ageInfo.exactYear} />
-        </div>
-      )}
-
-      {currentView === 'settings' && (
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-pink-800 to-yellow-700">
-          <Settings profile={profile} />
-        </div>
-      )}
-
-      {/* Hide navigation during first visit */}
-      {!isFirstVisit && <Navigation currentView={currentView} onViewChange={setCurrentView} />}
     </div>
   );
 }

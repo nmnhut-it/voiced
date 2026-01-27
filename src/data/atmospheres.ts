@@ -108,6 +108,15 @@ export const YEAR_THEMES: YearTheme[] = [
         colors: { primary: '#E8D5FF', secondary: '#D4E5FF', accent: '#FFFFFF' },
         timeOfDay: 'night',
       },
+      {
+        id: 'observation',
+        name: 'Observation',
+        description: 'Learning to observe the world and grow through gentle wisdom',
+        cssBackground: 'linear-gradient(180deg, #87CEEB 0%, #B8E0F6 30%, #f4a460 70%, #ffd700 100%)',
+        colors: { primary: '#B8E0F6', secondary: '#f4a460', accent: '#ffd700' },
+        timeOfDay: 'twilight',
+        audioPath: 'sound/observaton.mp3',
+      },
     ],
   },
   {

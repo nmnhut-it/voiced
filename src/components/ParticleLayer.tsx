@@ -48,6 +48,13 @@ const PARTICLE_THEMES: Record<string, ParticleTheme> = {
       { bg: 'rgba(255, 255, 200, 0.8)', glow: 'rgba(255, 240, 150, 0.6)' },
     ],
   },
+  observation: {
+    colors: [
+      { bg: 'rgba(184, 224, 246, 0.85)', glow: 'rgba(135, 206, 235, 0.6)' },
+      { bg: 'rgba(244, 164, 96, 0.8)', glow: 'rgba(255, 200, 150, 0.6)' },
+      { bg: 'rgba(255, 215, 0, 0.75)', glow: 'rgba(255, 235, 100, 0.5)' },
+    ],
+  },
   default: {
     colors: [
       { bg: 'rgba(255, 255, 255, 0.7)', glow: 'rgba(200, 200, 200, 0.5)' },

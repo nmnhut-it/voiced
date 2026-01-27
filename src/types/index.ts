@@ -32,6 +32,7 @@ export interface Atmosphere {
   };
   timeOfDay?: TimeOfDay;
   generatedImageUrl?: string;
+  audioPath?: string;
 }
 
 export interface AudioRecording {
