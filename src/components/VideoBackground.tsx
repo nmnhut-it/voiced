@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 
 interface VideoBackgroundProps {
   videoId?: string;
+  /** Separate image shown immediately while video loads (e.g. different ID than videoId) */
+  posterImageId?: string;
   allAtmosphereIds?: string[];
 }
 
@@ -20,15 +22,16 @@ function preloadImage(src: string): void {
   img.onload = () => preloadedImages.add(src);
 }
 
-export function VideoBackground({ videoId, allAtmosphereIds = [] }: VideoBackgroundProps) {
+export function VideoBackground({ videoId, posterImageId, allAtmosphereIds = [] }: VideoBackgroundProps) {
   const [mediaType, setMediaType] = useState<'video' | 'image' | 'gradient'>('gradient');
-  const [isLoading, setIsLoading] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [videoFadedIn, setVideoFadedIn] = useState(false);
   const [displayedVideoId, setDisplayedVideoId] = useState(videoId);
   const prevVideoIdRef = useRef(videoId);
 
   const videoSrc = displayedVideoId ? `${BASE_URL}videos/${displayedVideoId}.mp4` : null;
   const imageSrc = displayedVideoId ? `${BASE_URL}atmospheres/${displayedVideoId}.png` : null;
+  const posterSrc = posterImageId ? `${BASE_URL}atmospheres/${posterImageId}.png` : null;
 
   // Preload all atmosphere images on mount
   useEffect(() => {
@@ -68,11 +71,11 @@ export function VideoBackground({ videoId, allAtmosphereIds = [] }: VideoBackgro
   useEffect(() => {
     if (!displayedVideoId) {
       setMediaType('gradient');
-      setIsLoading(false);
+      setVideoFadedIn(false);
       return;
     }
 
-    setIsLoading(true);
+    setVideoFadedIn(false);
 
     // Try video first
     const video = document.createElement('video');
@@ -80,7 +83,8 @@ export function VideoBackground({ videoId, allAtmosphereIds = [] }: VideoBackgro
 
     video.oncanplay = () => {
       setMediaType('video');
-      setIsLoading(false);
+      // Delay fade-in slightly so the transition is visible
+      setTimeout(() => setVideoFadedIn(true), 50);
     };
 
     video.onerror = () => {
@@ -88,15 +92,8 @@ export function VideoBackground({ videoId, allAtmosphereIds = [] }: VideoBackgro
       const img = new Image();
       img.src = `${BASE_URL}atmospheres/${displayedVideoId}.png`;
 
-      img.onload = () => {
-        setMediaType('image');
-        setIsLoading(false);
-      };
-
-      img.onerror = () => {
-        setMediaType('gradient');
-        setIsLoading(false);
-      };
+      img.onload = () => setMediaType('image');
+      img.onerror = () => setMediaType('gradient');
     };
   }, [displayedVideoId]);
 
@@ -116,7 +113,15 @@ export function VideoBackground({ videoId, allAtmosphereIds = [] }: VideoBackgro
         style={{ background: FALLBACK_GRADIENT }}
       />
 
-      {/* Video background */}
+      {/* Poster image - shows immediately while video loads */}
+      {posterSrc && (
+        <div
+          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${posterSrc})` }}
+        />
+      )}
+
+      {/* Video background - fades in over poster when ready */}
       {mediaType === 'video' && videoSrc && (
         <video
           key={videoSrc}
@@ -125,12 +130,16 @@ export function VideoBackground({ videoId, allAtmosphereIds = [] }: VideoBackgro
           muted
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
+          style={{
+            opacity: videoFadedIn ? 1 : 0,
+            transition: 'opacity 1s ease-in-out',
+          }}
         >
           <source src={videoSrc} type="video/mp4" />
         </video>
       )}
 
-      {/* Image background */}
+      {/* Image background - fallback when no poster and video fails */}
       {mediaType === 'image' && imageSrc && (
         <div
           className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
